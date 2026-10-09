@@ -135,6 +135,7 @@ export default function LivePoolDashboard() {
       </section>
       <div className="mt-6 flex flex-wrap gap-5 text-sm text-cyan-300"><a href={`https://explorer.solana.com/account/${details.pool}?cluster=devnet`} target="_blank" rel="noopener noreferrer" className="underline">Pool on Explorer ↗</a><a href={`https://explorer.solana.com/address/${details.mint}?cluster=devnet`} target="_blank" rel="noopener noreferrer" className="underline">Token mint on Explorer ↗</a></div>
     </>}
+    {details && <div className="mt-7"><Link href={`/dbc-quotes?pool=${encodeURIComponent(details.pool)}`} className="inline-block rounded-lg bg-cyan-400 px-5 py-3 font-semibold text-slate-950">Continue to Step 9: SDK Swap Quotes →</Link></div>}
     <nav className="mt-10 text-sm text-cyan-300"><Link href="/dbc-pool">← Step 7: Create DBC Pool</Link></nav>
   </div></main>;
 }
