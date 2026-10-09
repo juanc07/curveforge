@@ -178,6 +178,9 @@ export default function DbcQuotesPage() {
           </div>
           <p className="mt-5 text-xs text-amber-200">This is a deterministic SDK quote at a particular pool state and block time, not a guaranteed executable price. Fees, pool balances and execution outcomes can change before a real swap. No transactions were submitted.</p>
         </section>}
+        <div className="mt-7">
+          <Link href={`/dbc-curve?pool=${encodeURIComponent(pool.trim())}`} className="inline-block rounded-lg bg-cyan-400 px-5 py-3 font-semibold text-slate-950 hover:bg-cyan-300">Continue to Step 10: SDK Quote Impact Curve →</Link>
+        </div>
         <nav className="mt-8 text-sm text-cyan-300">
           <Link href={`/dbc-dashboard?pool=${encodeURIComponent(pool)}`}>← Step 8: Live Pool Dashboard</Link>
         </nav>
