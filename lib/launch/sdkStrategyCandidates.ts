@@ -4,6 +4,7 @@ import {
   MigrationFeeOption, MigrationOption, TokenAuthorityOption, TokenDecimal, TokenType,
 } from "@meteora-ag/dynamic-bonding-curve-sdk";
 import type { StrategyId } from "./profiles";
+import { PUBLIC_CANDIDATES } from "./aiStrategyPolicy";
 
 export type Candidate = {
   id: StrategyId;
@@ -14,11 +15,9 @@ export type Candidate = {
 };
 
 /** All candidates: 1B SPL tokens (6 decimals), wSOL quote (9 decimals), DAMM v2. */
-export const SDK_CANDIDATES: readonly Candidate[] = [
-  { id: "stable-discovery", feeBps: 100, thresholdSol: 150, migrationSupplyPercent: 30, rationale: "Higher migration threshold and larger migration allocation; does not guarantee price stability." },
-  { id: "high-growth", feeBps: 50, thresholdSol: 60, migrationSupplyPercent: 15, rationale: "Lower trading fee and earlier threshold; demand, slippage, and graduation are not guaranteed." },
-  { id: "anti-sniper", feeBps: 500, thresholdSol: 100, migrationSupplyPercent: 20, rationale: "Higher fixed entry fee is a deterrent, NOT bot prevention or time-decaying fees." },
-];
+export const SDK_CANDIDATES: readonly Candidate[] = PUBLIC_CANDIDATES.map(({id, feeBps, thresholdSol, migrationSupplyPercent, tradeoff}) => ({
+  id, feeBps, thresholdSol, migrationSupplyPercent, rationale: tradeoff,
+}));
 
 /** Shared checked inputs for strategy preview, config display, preflight and deployment. */
 export type CurveInputs = {

@@ -29,3 +29,20 @@ Earlier milestone history remains in existing historical project documentation; 
 - Consolidated duplicate Meteora `buildCurve()` input assembly into `buildCurveConfig()` used by strategy preview, SDK config display, simulation, and deployment preflight.
 - Centralized input boundary checks. No transaction submission/signature logic changed.
 - Pending: local `npm run build`, SDK comparisons, RPC simulation regression and browser checks before commit.
+
+### Milestone 8 Phase B — Increment 1 (2026-10-09; verification pending)
+- Added optional AI launch-objectives interpretation and explicit selection panel to Step 3.
+- Added server-side OpenAI Responses API route with JSON schema, validation, request timeout, per-process rate guarding and safe fallback.
+- Retained fixed SDK strategy candidates, quotes, signing and deployment safeguards.
+- Phase A verified by user: commit `993df69` pushed; clean `main`; three candidate RPC simulations including Step 6 Stable Discovery, and shared builder production build passed.
+- Phase B runtime integration not yet tested; see `docs/MILESTONE_8_PHASE_B.md`.
+
+### Milestone 8 Phase B — Increment 2 (2026-10-09; local verification pending)
+- Added deterministic objective warnings for unsupported bot-prevention, RWA ownership, guaranteed outcomes, advanced fee/access controls and price pegs. These warnings are not AI-written.
+- Consolidated API preset facts in a small SDK-free policy module; strengthened JSON/origin/body validation, bounded concurrency and no-store responses. Retained conservative per-process usage limit; not public-deployment-grade abuse protection.
+- User screenshots showed Phase B Increment 1 correctly recommended Anti-Sniper and selected it; Step 5 devnet RPC simulated 100 SOL / 500 bps / 20% successfully (36,174 CU). Phase B Increment 1 commit/push has not been verified.
+- Increment 2 requires local build, browser and API regression tests before commit.
+
+### Phase B Increment 2 — Next.js 16 compatibility hotfix (2026-10-09)
+- Removed the route-level `runtime = "nodejs"` export from `app/api/ai/strategy/route.ts`: Next.js 16.4.0 with `cacheComponents` enabled rejects this segment configuration.
+- No changes to API key handling, request limits, AI recommendation behavior, or Solana transaction paths. Local production build and runtime revalidation pending.

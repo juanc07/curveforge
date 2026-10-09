@@ -7,6 +7,7 @@ import { STRATEGIES, type StrategyId } from "../../lib/launch/profiles";
 import { ClientWalletButton } from "../../components/wallet/ClientWalletButton";
 import { CurvePreview } from "../../components/strategies/CurvePreview";
 import { SdkQuoteComparison } from "../../components/strategies/SdkQuoteComparison";
+import { AiLiquidityArchitect } from "../../components/strategies/AiLiquidityArchitect";
 
 export default function StrategiesPage() {
   const [selected, setSelected] = useState<StrategyId>("stable-discovery");
@@ -24,6 +25,7 @@ export default function StrategiesPage() {
           <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">Shape the <span className="text-cyan-300">curve.</span></h1>
           <p className="mt-4 max-w-2xl text-slate-400">Compare three genuinely different read-only Meteora SDK configuration candidates under fixed assumptions. Optional read-only SDK pre-launch quotations are available below. No deployment happens here.</p>
         </section>
+        <AiLiquidityArchitect onChoose={setSelected} />
         <div className="mb-6 grid gap-3 md:grid-cols-3" role="group" aria-label="Choose a strategy">
           {STRATEGIES.map((p, i) => (
             <button key={p.id} type="button" onClick={() => setSelected(p.id)} aria-pressed={selected === p.id}
