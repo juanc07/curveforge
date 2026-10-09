@@ -87,7 +87,7 @@ export function CurvePreview({ strategy }: { strategy: StrategyId }) {
       <div className="relative flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300"><span className="h-2 w-2 rounded-full bg-cyan-400" /> Curve Lab / Scenario 01</div>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">Bonding curve explorer</h2>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">Concept-only curve sketch</h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">A visual sketch of launch behavior. Values are normalized illustrations, <strong className="font-semibold text-slate-300">not Meteora quotes or deployable settings</strong>.</p>
         </div>
         <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-300">ILLUSTRATIVE MODEL</span>
@@ -113,7 +113,7 @@ export function CurvePreview({ strategy }: { strategy: StrategyId }) {
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
           <Metric label="Progress" value={`${progress}%`} note="Scenario position" />
           <Metric label="Relative price" value={`${normalized.toFixed(2)}×`} note="Versus model starting point" />
-          <Metric label="Fee concept" value={`${fee.toFixed(1)}%`} note="Illustrative only; unverified" />
+          <Metric label="Fictional fee" value={`${fee.toFixed(1)}%`} note="Illustrative only; unverified" />
         </div>
       </div>
       <div className="relative mt-5 rounded-2xl border border-slate-700/70 bg-[#101d30] px-5 py-4">
@@ -121,7 +121,7 @@ export function CurvePreview({ strategy }: { strategy: StrategyId }) {
         <input id="scenario-progress" className="mt-4 w-full cursor-pointer accent-cyan-400" type="range" min="0" max="100" value={progress} onChange={e => setProgress(Number(e.target.value))} />
         <div className="mt-1 flex justify-between text-xs text-slate-500"><span>Launch begins</span><span>Illustrative end</span></div>
       </div>
-      <p className="mt-4 text-xs leading-relaxed text-slate-500">These equations are intentionally simplified design sketches. Anti-Sniper illustrates a declining-fee concept rather than a separate Meteora curve. No token economics, thresholds, fees, liquidity, execution price, or financial returns are being predicted. Real DBC configuration and on-chain simulations require SDK validation.</p>
+      <p className="mt-4 text-xs leading-relaxed text-slate-500">These arbitrary sketch equations are NOT the Meteora SDK curve. The declining-fee sketch for Anti-Sniper is NOT implemented by the actual preset, which uses a fixed 500 bps fee. Do not use these values to infer liquidity, slippage, execution prices, returns, or protections.</p>
     </section>
   );
 }

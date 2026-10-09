@@ -93,7 +93,7 @@ export default function LaunchPage() {
                 }}
                 className="inline-flex items-center justify-center rounded-xl border border-cyan-300 bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
               >
-                Continue to Step 2: Compare Strategies →
+                Continue to Step 3: Compare Strategies →
               </Link>
             )}
           </section>
@@ -107,7 +107,7 @@ export default function LaunchPage() {
               <div><dt className="text-slate-400">Meteora DBC program</dt><dd className="mt-1 break-all font-mono text-xs">{DBC_PROGRAM.toBase58()}</dd></div>
             </dl>
             <div className="mt-7 rounded-xl border border-cyan-900 bg-cyan-950/30 p-4 text-sm text-slate-300">
-              <strong className="text-cyan-300">Next milestone:</strong> verified SDK configuration builder, curve parameter validation, and transaction simulation.
+              <strong className="text-cyan-300">Next milestone:</strong> AI-guided strategy comparison, SDK configuration review, and transaction simulation.
             </div>
           </aside>
         </div>

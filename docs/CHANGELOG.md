@@ -46,3 +46,15 @@ Earlier milestone history remains in existing historical project documentation; 
 ### Phase B Increment 2 — Next.js 16 compatibility hotfix (2026-10-09)
 - Removed the route-level `runtime = "nodejs"` export from `app/api/ai/strategy/route.ts`: Next.js 16.4.0 with `cacheComponents` enabled rejects this segment configuration.
 - No changes to API key handling, request limits, AI recommendation behavior, or Solana transaction paths. Local production build and runtime revalidation pending.
+
+### Hackathon demo polish — patch pending local validation (2026-10-10)
+- Corrected Step 2 → Step 3 navigation, Step 3 header, and Step 3 → Step 4 button labels.
+- Moved the legacy fictitious curve visualization into an optional disclosure, leaving SDK-backed evidence visible by default.
+- Corrected preset objectives to describe *actual fixed-fee settings and migration allocations* rather than implied price stability, liquidity guarantees, or time-decaying Anti-Sniper fees.
+- Replaced outdated warnings that incorrectly claimed Step 3 selection cannot prefill Step 4.
+- **Scope:** copy/UI only; no changes to SDK builder, OpenAI API route, simulated transaction, signing, or on-chain deployment code.
+- **Required local verification:** `npm run build`, Step 2 → 3 → 4 selection, compare all three presets, toggle optional concept panel, and check Steps 5–6 navigation.
+
+### Hackathon decision-report increment (pending verification)
+- Added a read-only three-strategy Launch Decision Report using existing SDK hypothetical quote results. No blockchain transaction/API changes.
+- Tests pending: Next.js production build and browser selection/quote regressions on local Windows environment.

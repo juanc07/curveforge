@@ -33,3 +33,13 @@ See `docs/MILESTONE_8_PHASE_A.md` for complete assumptions and acceptance instru
 - **Verified by user before this patch:** AI recommended Anti-Sniper for RWA/sniper brief, and Step 5 CreateConfig RPC simulation succeeded at 100 SOL / 500 bps / 20% with 36,174 CU. This does not demonstrate bot prevention or RWA compliance.
 - **Patch pending validation:** deterministic capability warnings, stricter API request envelope and per-instance concurrency checks. No build or live API test performed on the increment 2 patch yet.
 - **Not completed:** distributed authenticated rate limits, production origin/proxy configuration, security testing, final Phase B commit/push and clean snapshot verification.
+
+### Hackathon demo polish — pending (2026-10-10)
+- UI/copy alignment proposed; not yet locally build-verified or committed.
+- User previously verified Phase B OpenAI POST 200 twice, production build, RWA/MEV/return guardrails, and normal-brief recommendation.
+- Earlier status entries are historical snapshots, not latest truth; this patch does not claim public API production security.
+- No new on-chain deployment or sell-quote validation included.
+
+### Launch Decision Report increment — unverified
+- Three-card quote comparison and normalized token-output bars are prepared in Step 3; SDK calls are unchanged.
+- Local production build/browser validation and commit/push still required.
