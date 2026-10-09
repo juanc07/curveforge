@@ -1,19 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  ActivationType,
-  BaseFeeMode,
-  buildCurve,
-  CollectFeeMode,
-  MigrationFeeOption,
-  MigrationOption,
-  TokenAuthorityOption,
-  TokenDecimal,
-  TokenType,
-} from "@meteora-ag/dynamic-bonding-curve-sdk";
 import { ClientWalletButton } from "../../components/wallet/ClientWalletButton";
+import { SDK_CANDIDATES, compareSdkCandidates, buildCurveConfig } from "../../lib/launch/sdkStrategyCandidates";
+import { STRATEGIES, type StrategyId } from "../../lib/launch/profiles";
 
 const INTEGER = /^\d+$/;
 
@@ -41,6 +32,32 @@ export default function DbcConfigPage() {
   const [threshold, setThreshold] = useState("100");
   const [feeBps, setFeeBps] = useState("100");
   const [migrationPercent, setMigrationPercent] = useState("20");
+  const [preset, setPreset] = useState<StrategyId | null>(null);
+  const [presetWarning, setPresetWarning] = useState("");
+
+  // Query input is only a preset identifier. Never trust client-provided SDK values.
+  // Existing bookmarked /dbc-config URLs retain their original defaults.
+  useEffect(() => {
+    const strategy = new URLSearchParams(window.location.search).get("strategy");
+    if (!strategy) return;
+    const candidate = SDK_CANDIDATES.find((item) => item.id === strategy);
+    const built = compareSdkCandidates().find((item) => item.id === strategy);
+    if (!candidate || !built?.valid) {
+      setPresetWarning("Unknown or invalid strategy preset. Default inputs were retained.");
+      return;
+    }
+    setSupply("1000000000");
+    setThreshold(String(candidate.thresholdSol));
+    setFeeBps(String(candidate.feeBps));
+    setMigrationPercent(String(candidate.migrationSupplyPercent));
+    setPreset(candidate.id);
+  }, []);
+  const selectedPreset = preset ? SDK_CANDIDATES.find((item) => item.id === preset) : undefined;
+  const isPresetModified = Boolean(selectedPreset && (
+    supply !== "1000000000" || threshold !== String(selectedPreset.thresholdSol) ||
+    feeBps !== String(selectedPreset.feeBps) || migrationPercent !== String(selectedPreset.migrationSupplyPercent)
+  ));
+
 
   const result = useMemo(() => {
     try {
@@ -49,55 +66,7 @@ export default function DbcConfigPage() {
       const fixedFeeBps = readPositiveInteger(feeBps, "Trading fee (bps)", 1, 1000);
       const percentageSupplyOnMigration = readPositiveInteger(migrationPercent, "Supply on migration (%)", 1, 99);
 
-      // Based on the SDK's createConfig.test.ts single-segment buildCurve example.
-      // This builds *parameters only*; it does NOT validate chain accounts or simulate a transaction.
-      const config = buildCurve({
-        token: {
-          tokenType: TokenType.SPLToken,
-          tokenBaseDecimal: TokenDecimal.SIX,
-          tokenQuoteDecimal: TokenDecimal.NINE,
-          tokenAuthorityOption: TokenAuthorityOption.Immutable,
-          totalTokenSupply,
-          leftover: 0,
-        },
-        fee: {
-          baseFeeParams: {
-            baseFeeMode: BaseFeeMode.FeeSchedulerLinear,
-            feeSchedulerParam: {
-              startingFeeBps: fixedFeeBps,
-              endingFeeBps: fixedFeeBps,
-              numberOfPeriod: 0,
-              totalDuration: 0,
-            },
-          },
-          dynamicFeeEnabled: false,
-          collectFeeMode: CollectFeeMode.QuoteToken,
-          creatorTradingFeePercentage: 0,
-          poolCreationFee: 0,
-          enableFirstSwapWithMinFee: false,
-        },
-        migration: {
-          migrationOption: MigrationOption.MET_DAMM_V2,
-          migrationFeeOption: MigrationFeeOption.FixedBps100,
-          migrationFee: { feePercentage: 0, creatorFeePercentage: 0 },
-        },
-        liquidityDistribution: {
-          partnerLiquidityPercentage: 0,
-          partnerPermanentLockedLiquidityPercentage: 100,
-          creatorLiquidityPercentage: 0,
-          creatorPermanentLockedLiquidityPercentage: 0,
-        },
-        lockedVesting: {
-          totalLockedVestingAmount: 0,
-          numberOfVestingPeriod: 0,
-          cliffUnlockAmount: 0,
-          totalVestingDuration: 0,
-          cliffDurationFromMigrationTime: 0,
-        },
-        activationType: ActivationType.Timestamp,
-        percentageSupplyOnMigration,
-        migrationQuoteThreshold,
-      });
+      const config = buildCurveConfig({ totalTokenSupply, migrationQuoteThreshold, fixedFeeBps, percentageSupplyOnMigration });
       return { text: serialize(config), error: "" };
     } catch (error) {
       return { text: "", error: error instanceof Error ? error.message : "SDK could not build this curve." };
@@ -119,6 +88,13 @@ export default function DbcConfigPage() {
         <h1 className="mt-3 text-4xl font-bold">Build with the real Meteora SDK</h1>
         <p className="mt-4 max-w-3xl leading-relaxed text-slate-400">This page calls the installed SDK&apos;s <code>buildCurve()</code> helper to derive typed launch parameters. It does not create accounts, request a signature, or send a transaction.</p>
         <div className="mt-6 rounded-xl border border-amber-600/40 bg-amber-950/20 p-4 text-sm text-amber-200">Experimental single-segment SOL quote template adapted from Meteora SDK tests. Not financial advice, not the final strategy presets, and not a confirmation that this config will deploy. SDK construction is not equivalent to on-chain transaction simulation.</div>
+        {selectedPreset && <div className="mt-6 rounded-xl border border-cyan-500/40 bg-cyan-950/20 p-4 text-sm text-cyan-100" role="status">
+          Strategy preset: <strong>{STRATEGIES.find((item) => item.id === preset)?.label}</strong>. {isPresetModified
+            ? "You changed the original preset. Step 5 will use the edited inputs shown below."
+            : "SDK-validated candidate values have prefilled the four inputs below. Review them before simulation."}
+          <p className="mt-2 text-xs text-slate-300">The Step 3 quote comparison used initial hypothetical pools. No swap quotes, signatures, or deployments are performed by applying this preset.</p>
+        </div>}
+        {presetWarning && <p role="alert" className="mt-6 rounded-xl border border-amber-700 p-4 text-sm text-amber-200">{presetWarning}</p>}
         <section className="mt-8 rounded-2xl border border-slate-700 bg-[#101829] p-6">
           <h2 className="text-xl font-semibold">Editable SDK inputs</h2>
           <div className="mt-5 grid gap-5 sm:grid-cols-2">

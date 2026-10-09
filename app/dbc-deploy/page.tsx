@@ -6,10 +6,8 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Keypair, Transaction, PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT } from "@solana/spl-token";
 import {
-  DynamicBondingCurveClient, buildCurve, ActivationType, BaseFeeMode,
-  CollectFeeMode, MigrationFeeOption, MigrationOption,
-  TokenAuthorityOption, TokenDecimal, TokenType,
-} from "@meteora-ag/dynamic-bonding-curve-sdk";
+  DynamicBondingCurveClient, } from "@meteora-ag/dynamic-bonding-curve-sdk";
+import { buildCurveConfig } from "../../lib/launch/sdkStrategyCandidates";
 import { ClientWalletButton } from "../../components/wallet/ClientWalletButton";
 
 const PROGRAM_ID = "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN";
@@ -71,14 +69,7 @@ export default function DbcDeployPage() {
     try {
       const programInfo = await connection.getAccountInfo(new PublicKey(PROGRAM_ID));
       if (!programInfo?.executable) throw new Error("DBC program is not executable on the connected RPC.");
-      const configParams = buildCurve({
-        token: { tokenType: TokenType.SPLToken, tokenBaseDecimal: TokenDecimal.SIX, tokenQuoteDecimal: TokenDecimal.NINE, tokenAuthorityOption: TokenAuthorityOption.Immutable, totalTokenSupply, leftover: 0 },
-        fee: { baseFeeParams: { baseFeeMode: BaseFeeMode.FeeSchedulerLinear, feeSchedulerParam: { startingFeeBps: fixedFeeBps, endingFeeBps: fixedFeeBps, numberOfPeriod: 0, totalDuration: 0 } }, dynamicFeeEnabled: false, collectFeeMode: CollectFeeMode.QuoteToken, creatorTradingFeePercentage: 0, poolCreationFee: 0, enableFirstSwapWithMinFee: false },
-        migration: { migrationOption: MigrationOption.MET_DAMM_V2, migrationFeeOption: MigrationFeeOption.FixedBps100, migrationFee: { feePercentage: 0, creatorFeePercentage: 0 } },
-        liquidityDistribution: { partnerLiquidityPercentage: 0, partnerPermanentLockedLiquidityPercentage: 100, creatorLiquidityPercentage: 0, creatorPermanentLockedLiquidityPercentage: 0 },
-        lockedVesting: { totalLockedVestingAmount: 0, numberOfVestingPeriod: 0, cliffUnlockAmount: 0, totalVestingDuration: 0, cliffDurationFromMigrationTime: 0 },
-        activationType: ActivationType.Timestamp, percentageSupplyOnMigration, migrationQuoteThreshold,
-      });
+      const configParams = buildCurveConfig({ totalTokenSupply, migrationQuoteThreshold, fixedFeeBps, percentageSupplyOnMigration });
       // Temporary config signer stays in memory for the explicit deployment action.
       const configAccount = Keypair.generate();
       const client = new DynamicBondingCurveClient(connection, "confirmed");
