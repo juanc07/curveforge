@@ -2,8 +2,7 @@
 {
   "name": "CurveForge Demo Token",
   "symbol": "CFDEMO",
-  "description": "CurveForge demonstration token launched through Meteora Dynamic Bonding Curve on Solana devnet. For technical testing only.",
-  "image": "",
+  "description": "CurveForge demonstration token launched through Meteora Dynamic Bonding Curve on Solana devnet. For technical testing only.",  
   "attributes": [
     {
       "trait_type": "Environment",
