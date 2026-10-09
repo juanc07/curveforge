@@ -142,6 +142,13 @@ export default function DbcSimulatePage() {
         <h2 className={`text-xl font-semibold ${passed ? "text-emerald-300" : "text-amber-300"}`}>{passed ? "RPC simulation succeeded" : "Transaction diagnostics"}</h2>
         <pre className="mt-4 max-h-[550px] overflow-auto whitespace-pre-wrap break-words rounded-xl bg-[#050a13] p-4 font-mono text-xs leading-relaxed text-slate-200">{report}</pre>
       </section>}
+      {passed && <div className="mt-6 rounded-xl border border-emerald-700/50 bg-emerald-950/20 p-5">
+        <p className="text-sm text-emerald-300">Preflight passed. Step 6 will run a fresh simulation and require separate Phantom approval before any devnet write.</p>
+        <Link href={`/dbc-deploy?supply=${encodeURIComponent(supply)}&threshold=${encodeURIComponent(threshold)}&fee=${encodeURIComponent(fee)}&migration=${encodeURIComponent(migrate)}`}
+          className="mt-4 inline-block rounded-lg bg-cyan-400 px-5 py-3 font-semibold text-slate-950">
+          Continue to Step 6: Review &amp; deploy configuration →
+        </Link>
+      </div>}
       <nav className="mt-8 text-sm text-cyan-300"><Link href="/dbc-config">← SDK parameter builder</Link></nav>
     </div>
   </main>;
