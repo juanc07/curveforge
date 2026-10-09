@@ -41,7 +41,7 @@ export default function StrategiesPage() {
           </dl>
           <p className="mt-5 rounded-xl border border-amber-700/40 bg-amber-950/20 p-4 text-sm leading-relaxed text-amber-200">Pre-deployment visualization only. No Meteora curve mathematics, transaction simulation, financial projection, or deployment has occurred. Next: verified SDK configuration, transaction review, wallet signature.</p>
         </section>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pb-10"><Link href="/launch" className="inline-flex rounded-xl border border-cyan-500/60 px-5 py-3 font-semibold text-cyan-300 transition hover:bg-cyan-950">← Back to asset draft</Link><span className="text-xs text-slate-500">CurveForge / Curve Lab v0.1</span></div>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pb-10"><div className="flex flex-wrap items-center gap-3"><Link href="/launch" className="inline-flex rounded-xl border border-cyan-500/60 px-5 py-3 font-semibold text-cyan-300 transition hover:bg-cyan-950">← Back to asset draft</Link><Link href="/dbc-config" onClick={() => { try { sessionStorage.setItem("curveforge.selectedStrategy", selected); } catch { /* storage unavailable */ } }} className="inline-flex rounded-xl bg-cyan-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300">Continue to Step 3: SDK Config →</Link></div><span className="text-xs text-slate-500">CurveForge / Curve Lab v0.1</span></div>
       </div>
     </main>
   );

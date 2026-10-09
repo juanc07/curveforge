@@ -61,18 +61,18 @@ export default function LaunchPage() {
         <div className="mt-10 grid gap-6 lg:grid-cols-5">
           <section className="space-y-5 rounded-2xl border border-slate-800 bg-slate-900 p-6 lg:col-span-3">
             <div><label htmlFor="token-name" className={labelClass}>Asset / token name</label>
-              <input id="token-name" className={inputClass} maxLength={32} value={name} onChange={e=>setName(e.target.value)} placeholder="Example: Rental Revenue Token" /></div>
+              <input id="token-name" className={inputClass} maxLength={32} value={name} onChange={e=>{ setName(e.target.value); setCheck({ state: "idle", message: "Draft changed. Verify launch readiness again." }); }} placeholder="Example: Rental Revenue Token" /></div>
             <div><label htmlFor="token-symbol" className={labelClass}>Symbol (2–10 letters or numbers)</label>
-              <input id="token-symbol" className={inputClass} maxLength={10} value={symbol} onChange={e=>setSymbol(e.target.value.toUpperCase())} placeholder="RENT" /></div>
+              <input id="token-symbol" className={inputClass} maxLength={10} value={symbol} onChange={e=>{ setSymbol(e.target.value.toUpperCase()); setCheck({ state: "idle", message: "Draft changed. Verify launch readiness again." }); }} placeholder="RENT" /></div>
             <div><label htmlFor="description" className={labelClass}>Description (10–500 characters)</label>
-              <textarea id="description" className={inputClass} rows={4} maxLength={500} value={description} onChange={e=>setDescription(e.target.value)} placeholder="Describe your asset and intended liquidity needs..." /></div>
+              <textarea id="description" className={inputClass} rows={4} maxLength={500} value={description} onChange={e=>{ setDescription(e.target.value); setCheck({ state: "idle", message: "Draft changed. Verify launch readiness again." }); }} placeholder="Describe your asset and intended liquidity needs..." /></div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div><label htmlFor="asset-type" className={labelClass}>Asset category</label>
-                <select id="asset-type" className={inputClass} value={assetType} onChange={e=>setAssetType(e.target.value)}>
+                <select id="asset-type" className={inputClass} value={assetType} onChange={e=>{ setAssetType(e.target.value); setCheck({ state: "idle", message: "Draft changed. Verify launch readiness again." }); }}>
                   {["RWA","EQUITY","AI","MEME","CUSTOM"].map(item=><option key={item} value={item}>{item}</option>)}
                 </select></div>
               <div><label htmlFor="quote-token" className={labelClass}>Preferred quote</label>
-                <select id="quote-token" className={inputClass} value={quote} onChange={e=>setQuote(e.target.value)}>
+                <select id="quote-token" className={inputClass} value={quote} onChange={e=>{ setQuote(e.target.value); setCheck({ state: "idle", message: "Draft changed. Verify launch readiness again." }); }}>
                   <option value="SOL">SOL</option><option value="USDC">USDC</option>
                 </select></div>
             </div>
@@ -82,6 +82,20 @@ export default function LaunchPage() {
               {check.state==="checking" ? "Checking..." : "Verify launch readiness"}
             </button>
             <p role="status" className={`text-sm ${check.state==="failed" ? "text-rose-300" : check.state==="ready" ? "text-emerald-300" : "text-slate-400"}`}>{check.message}</p>
+            {check.state === "ready" && valid && connected && publicKey && (
+              <Link
+                href="/strategies"
+                onClick={() => {
+                  sessionStorage.setItem("curveforge.launchDraft.v1", JSON.stringify({
+                    name: name.trim(), symbol: symbol.trim(), description: description.trim(),
+                    assetType, quote, wallet: publicKey.toBase58(),
+                  }));
+                }}
+                className="inline-flex items-center justify-center rounded-xl border border-cyan-300 bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
+              >
+                Continue to Step 2: Compare Strategies →
+              </Link>
+            )}
           </section>
           <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-6 lg:col-span-2">
             <h2 className="text-xl font-semibold">Launch draft summary</h2>
