@@ -28,11 +28,20 @@ export default function PoolLaunchPage() {
   const [report, setReport] = useState("");
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [result, setResult] = useState<Success | null>(null);
+  const [previousPool, setPreviousPool] = useState<string | null>(null);
   const lock = useRef(false);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const config = params.get("config");
     if (config) setConfigAddress(config);
+    // Restore a previous deployment as a navigation shortcut, never as proof of a fresh launch.
+    try {
+      const saved = window.localStorage.getItem("curveforge:lastDevnetPool");
+      if (saved) {
+        const key = new PublicKey(saved);
+        setPreviousPool(key.toBase58());
+      }
+    } catch { /* Missing/invalid storage: no shortcut. */ }
   }, []);
   const update = (setter: (v: string) => void) => (value: string) => {
     setter(value); setPrepared(null); setReport(""); setResult(null);
@@ -110,6 +119,8 @@ export default function PoolLaunchPage() {
       const state = await client.state.getPool(prepared.pool);
       if (!state) throw new Error(`Transaction confirmed, but pool state not found. Check signature ${signature}`);
       setResult({signature, mint:prepared.mint.publicKey.toBase58(), pool:prepared.pool.toBase58(), config:prepared.config.toBase58()});
+      setPreviousPool(prepared.pool.toBase58());
+      try { window.localStorage.setItem("curveforge:lastDevnetPool", prepared.pool.toBase58()); } catch { /* Storage optional. */ }
       setReport(`DEVNET POOL VERIFIED\nSignature: ${signature}\nMint: ${prepared.mint.publicKey.toBase58()}\nPool: ${prepared.pool.toBase58()}`);
       setPrepared(null);
     } catch (e) {
@@ -138,8 +149,14 @@ export default function PoolLaunchPage() {
       <button className="rounded-lg bg-cyan-400 px-6 py-3 font-semibold text-slate-950 disabled:opacity-50" disabled={busy || !connected || !!result} onClick={prepare}>{busy ? "Working…" : "1. Prepare & simulate (no signing)"}</button>
     </section>
     {prepared && <section className="mt-6 rounded-2xl border border-cyan-700 bg-[#101829] p-6"><h2 className="text-xl font-semibold">2. Review before signing</h2><p className="mt-3 break-all text-sm">New token mint: {prepared.mint.publicKey.toBase58()}</p><p className="mt-2 break-all text-sm">Derived pool: {prepared.pool.toBase58()}</p><p className="mt-2 break-all text-sm">Config: {prepared.config.toBase58()}</p><p className="mt-3 text-sm text-amber-200">This will create a new mint and DBC pool on DEVNET; it will not create a second configuration. Check wallet prompts carefully.</p><button disabled={busy || !signTransaction} onClick={deploy} className="mt-5 rounded-lg bg-emerald-400 px-6 py-3 font-semibold text-slate-950 disabled:opacity-50">2. Sign in Phantom & create pool</button></section>}
-    {result && <section className="mt-6 rounded-2xl border border-emerald-700 bg-emerald-950/20 p-6"><h2 className="text-xl font-semibold text-emerald-300">DBC pool verified on devnet</h2><p className="mt-3 break-all">Mint: {result.mint}</p><p className="mt-2 break-all">Pool: {result.pool}</p><a href={`https://explorer.solana.com/tx/${result.signature}?cluster=devnet`} target="_blank" rel="noopener noreferrer" className="mt-3 block text-cyan-300 underline">View transaction on Explorer ↗</a></section>}
+    {result && <section className="mt-6 rounded-2xl border border-emerald-700 bg-emerald-950/20 p-6"><h2 className="text-xl font-semibold text-emerald-300">DBC pool verified on devnet</h2><p className="mt-3 break-all">Mint: {result.mint}</p><p className="mt-2 break-all">Pool: {result.pool}</p><a href={`https://explorer.solana.com/tx/${result.signature}?cluster=devnet`} target="_blank" rel="noopener noreferrer" className="mt-3 block text-cyan-300 underline">View transaction on Explorer ↗</a><Link href={`/dbc-dashboard?pool=${encodeURIComponent(result.pool)}&mint=${encodeURIComponent(result.mint)}`} className="mt-5 inline-block rounded-lg bg-cyan-400 px-6 py-3 font-semibold text-slate-950">Continue to Step 8: Live Pool Dashboard →</Link></section>}
     {report && <section className="mt-6 rounded-2xl border border-slate-700 bg-[#101829] p-6"><h2 className="text-lg font-semibold">Transaction diagnostics</h2><pre className="mt-4 max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[#050a13] p-4 text-xs">{report}</pre></section>}
+    {!result && <section className="mt-6 rounded-2xl border border-slate-700 bg-[#101829] p-5">
+      <h2 className="text-lg font-semibold">Step 8 — Live Pool Dashboard</h2>
+      <p className="mt-2 text-sm text-slate-400">Already deployed a pool? Open the live dashboard without creating another token. The dashboard verifies pool data from devnet.</p>
+      {previousPool ? <Link href={`/dbc-dashboard?pool=${encodeURIComponent(previousPool)}`} className="mt-4 inline-block rounded-lg bg-cyan-400 px-5 py-3 font-semibold text-slate-950">Continue to Step 8: Last launched pool →</Link>
+        : <Link href="/dbc-dashboard" className="mt-4 inline-block rounded-lg border border-cyan-500 px-5 py-3 font-semibold text-cyan-300">Go to Step 8: Enter existing pool address →</Link>}
+    </section>}
     <nav className="mt-8 text-sm text-cyan-300"><Link href="/dbc-deploy">← Step 6: Configuration deployment</Link></nav>
   </div></main>;
 }
